@@ -1,10 +1,52 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, TextInput, Button } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useDispatch } from 'react-redux';
 
 import Colors from '../constants/Colors';
 
+import * as authActions from '../store/actions/auth';
+
 const AuthScreen = props => {
+
+    console.log('render')
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isSignUp, setIsSignUp] = useState(false);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert('Error', error.message, [{ text: 'Ok'}]);
+        }
+    }, [error]);
+
+    const authHandler = async (signUp) => {
+        console.log('handler')
+        let action;
+        if (signUp) {
+            action = authActions.signup(email, password); 
+            console.log('using signup')
+        } else {
+            action = authActions.login(email, password); 
+            console.log('using login')
+        }
+        setError(null);
+        setIsLoading(true);
+        try {
+            await dispatch(action);
+        } catch (err) {
+            setError(err);
+            console.log(err)
+        }
+        setIsLoading(false);
+    };
+    
+
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <LinearGradient colors={['#a8ffc2', '#ffffa8', '#ffc6a8']} start={[0, 0]} end={[1, 1]} style={styles.gradient}>
@@ -14,9 +56,9 @@ const AuthScreen = props => {
                         <TextInput style={styles.input} id="email" 
                             keyboardType='email-address' 
                             autoCapitalize='none' 
-                            errorMessage="Please enter a valid email address" 
-                            onValueChange={() => {}}
-                            initialValue=""
+                            errorMessage="Please enter a valid email address"
+                            onChangeText={value => setEmail(value)}
+                            value={email}
                             placeholder='email goes here'
                             required
                             email />
@@ -28,20 +70,36 @@ const AuthScreen = props => {
                             secureTextEntry
                             autoCapitalize='none' 
                             errorMessage="Please enter a valid password" 
-                            onValueChange={() => {}}
-                            initialValue=""
+                            onChangeText={value => setPassword(value)}
+                            value={password}
                             placeholder='password goes here'
                             required
                             minLength={5} />
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                    {isLoading ? (
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50 }}>
+                            <ActivityIndicator size='small' color={Colors.primary} />
+                        </View>
+                    ) : (
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', height: 50 }}>
                         <View style={styles.buttonContainer}>
-                            <Button title='Log in' color={Colors.primary} onPress={() => {}} />
+                            <Button title='Log in' color={Colors.primary} onPress={() => {
+                                console.log('in')
+                                setIsSignUp(false);
+                                authHandler(false);
+                                console.log('in')
+                            }} />
                         </View>
                         <View style={styles.buttonContainer}>
-                            <Button title='Sign up' color={Colors.secondary} onPress={() => {}} />
+                            <Button title='Sign up' color={Colors.secondary} onPress={() => {
+                                console.log('in')
+                                setIsSignUp(true);
+                                authHandler(true);
+                                console.log('in')
+                            }} />
                         </View>
                     </View>
+                    )}
                 </View>
             </LinearGradient>
         </View>
