@@ -1,13 +1,26 @@
+import { AsyncStorage } from 'react-native';
+
 import DevConfig from '../../config/dev/api';
 
 export const SIGNUP = 'SIGNUP';
 export const LOGIN = 'LOGIN';
+export const AUTHENTICATE = 'AUTHENTICATE';
+export const LOGOUT = 'LOGOUT';
+
+let timer;
+
+export const authenticate = (userId, token, expirationTime) => {
+    return dispatch => {
+        dispatch(setLogoutTimer(expirationTime));
+        dispatch({ type: AUTHENTICATE, userId: userId, token: token });
+    };
+};
 
 export const signup = (email, password) => {
     console.log(email + ' + ' + password)
     return async dispatch => {
+        let resData;
         try {
-            let resData;
             const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${DevConfig.apiKey}`, 
                 {
                     method: 'POST',
@@ -35,15 +48,17 @@ export const signup = (email, password) => {
             throw new Error(err);
         }
 
-        dispatch({ type: SIGNUP })
+        dispatch(authenticate(resData.localId, resData.idToken, parseInt(resData.expiresIn) * 1000));
+        const expidationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000);
+        saveDataToDevice(resData.idToken, resData.localId, expidationDate);
     };
 };
 
 export const login = (email, password) => {
     console.log(email + ' + ' + password)
     return async dispatch => {
+        let resData;
         try {
-            let resData;
             const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${DevConfig.apiKey}`, 
                 {
                     method: 'POST',
@@ -71,6 +86,36 @@ export const login = (email, password) => {
             throw new Error(err);
         }
 
-        dispatch({ type: LOGIN })
+        dispatch(authenticate(resData.localId, resData.idToken, parseInt(resData.expiresIn) * 1000));
+        const expidationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000);
+        saveDataToDevice(resData.idToken, resData.localId, expidationDate);
     };
+};
+
+export const logout = () => {
+    AsyncStorage.removeItem('userData');
+    clearLogoutTimer();
+    return { type: LOGOUT };
+};
+
+const clearLogoutTimer = () => {
+    if (timer) {
+        clearTimeout(timer);
+    }
+};
+
+const setLogoutTimer = expirationTime => {
+    return dispath => {
+        timer = setTimeout(() => {
+            dispath(logout());
+        }, expirationTime);
+    };
+};
+
+const saveDataToDevice = (token, userId, expirationDate) => {
+    AsyncStorage.setItem('userData', JSON.stringify({
+        token: token,
+        userId: userId,
+        expirationDate: expirationDate.toISOString()
+    }))
 };

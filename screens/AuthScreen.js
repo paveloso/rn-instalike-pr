@@ -39,11 +39,12 @@ const AuthScreen = props => {
         setIsLoading(true);
         try {
             await dispatch(action);
+            props.navigation.navigate('Insta');
         } catch (err) {
             setError(err);
             console.log(err)
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
     
 

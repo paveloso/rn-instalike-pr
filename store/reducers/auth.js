@@ -17,13 +17,13 @@ export default (state = initialState, action) => {
         //         token: action.token,
         //         userId: action.userId
         //     };
-        // case AUTHENTICATE:
-        //     return {
-        //         token: action.token,
-        //         userId: action.userId
-        //     };
-        // case LOGOUT:
-        //     return initialState;
+        case AUTHENTICATE:
+            return {
+                token: action.token,
+                userId: action.userId
+            };
+        case LOGOUT:
+            return initialState;
         default:
             return state;
     }
