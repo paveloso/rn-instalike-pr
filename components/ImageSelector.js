@@ -25,8 +25,8 @@ const ImageSelector = props => {
         }
         const image = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
-            aspect: [16, 9],
-            quality: 0.5
+            aspect: [1, 1],
+            quality: 0.2
         });
 
         console.log(image);
@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     imagePreview: {
-        width: '100%',
-        height: 200,
+        width: 300,
+        height: 300,
         marginBottom: 10,
         justifyContent: 'center',
         alignItems: 'center',

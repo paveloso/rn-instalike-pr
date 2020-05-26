@@ -11,9 +11,11 @@ import InstaNavigator from './navigation/InstaNavigator';
 import NavigationContainer from './navigation/NavigationContainer';
 
 import authReducer from './store/reducers/auth';
+import postReducer from './store/reducers/post';
 
 const rootReducer = combineReducers({
-  auth: authReducer
+  auth: authReducer,
+  post: postReducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
