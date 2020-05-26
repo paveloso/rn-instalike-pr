@@ -3,19 +3,29 @@ import { StyleSheet, Text, View } from 'react-native';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
+import firebase from 'firebase';
+
+import AppApiConfig from './config/dev/api';
 
 import InstaNavigator from './navigation/InstaNavigator';
 import NavigationContainer from './navigation/NavigationContainer';
 
 import authReducer from './store/reducers/auth';
+import postReducer from './store/reducers/post';
 
 const rootReducer = combineReducers({
-  auth: authReducer
+  auth: authReducer,
+  post: postReducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
 export default function App() {
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(AppApiConfig.firebaseConfig);
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer />
