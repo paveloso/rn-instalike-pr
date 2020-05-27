@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Button, FlatList, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Button, FlatList, ScrollView, ActivityIndicator, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { HeaderButtons, HeaderButton, Item } from 'react-navigation-header-buttons';
@@ -59,11 +59,12 @@ const InstaScreen = props => {
 
     return (
         <View>
-            <View>
-                <Text>this is InstaScreen</Text>
+            {/* <SafeAreaView style={{}}> */}
+            {/* <View>
+                <Text>this is InstaScreen</Text>*/}
                 <Button title='Logout' onPress={logoutHandler} color={Colors.secondary} />
                 {/* <PostListItemShort style={{ padding: 10 }} imageUrl='https://firebasestorage.googleapis.com/v0/b/rn-instalike-pr.appspot.com/o/images%2F1590502598481?alt=media&amp;token=b0df49a5-e6f2-4ac5-a2ce-ea74c3ebe6e5' authorId='2341' description='asfsgfsdgs' /> */}
-            </View>
+            {/* </View> */}
             <FlatList data={posts} 
                         onRefresh={loadPosts}
                         refreshing={isRefreshing}
@@ -74,6 +75,7 @@ const InstaScreen = props => {
                                                     description={itemData.item.description}
                                                     onSelect={() => {}} />} 
             />
+            {/* // </SafeAreaView> */}
         </View>
     );
 };

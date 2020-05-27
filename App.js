@@ -12,10 +12,12 @@ import NavigationContainer from './navigation/NavigationContainer';
 
 import authReducer from './store/reducers/auth';
 import postReducer from './store/reducers/post';
+import userReducer from './store/reducers/user';
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  post: postReducer
+  post: postReducer,
+  user: userReducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

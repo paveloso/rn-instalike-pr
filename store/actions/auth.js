@@ -94,6 +94,7 @@ export const login = (email, password) => {
 
 export const logout = () => {
     AsyncStorage.removeItem('userData');
+    AsyncStorage.removeItem('userNickname');
     clearLogoutTimer();
     return { type: LOGOUT };
 };

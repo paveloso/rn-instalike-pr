@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import Colors from '../constants/Colors';
 
 import * as authActions from '../store/actions/auth';
+import * as userActions from '../store/actions/user';
 
 const AuthScreen = props => {
 
@@ -28,17 +29,21 @@ const AuthScreen = props => {
     const authHandler = async (signUp) => {
         console.log('handler')
         let action;
+        let uAction;
         if (signUp) {
             action = authActions.signup(email, password); 
+            uAction = userActions.createUser();
             console.log('using signup')
         } else {
             action = authActions.login(email, password); 
+            uAction = userActions.getUser();
             console.log('using login')
         }
         setError(null);
         setIsLoading(true);
         try {
             await dispatch(action);
+            await dispatch(uAction);
             props.navigation.navigate('Insta');
         } catch (err) {
             setError(err);
